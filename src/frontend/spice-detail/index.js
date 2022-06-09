@@ -1,28 +1,19 @@
-import axios from 'axios';
-import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { useGetSpice } from '../api';
 
 const SpiceDetail = () => {
   const { id } = useParams();
-  const [spice, setSpice] = useState(null);
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const { data } = await axios.get(`/api/v1/spices/${id}`);
-      setSpice(data);
-    };
-    fetchData();
-  }, [id]);
+  const spiceQuery = useGetSpice(id);
 
   return (
     <div>
       <h2>Spice Detail Page</h2>
-      {spice && (
+      {spiceQuery.isFetched && spiceQuery.data && (
         <div>
-          <div>Spice Name: {spice.name}</div>
-          <div>Spice Color: {spice.color}</div>
-          <div>Spice Cost: {spice.price}</div>
-          <div>Spice Heat Level: {spice.heat}</div>
+          <div>Spice Name: {spiceQuery.data.name}</div>
+          <div>Spice Color: {spiceQuery.data.color}</div>
+          <div>Spice Cost: {spiceQuery.data.price}</div>
+          <div>Spice Heat Level: {spiceQuery.data.heat}</div>
         </div>
       )}
     </div>
