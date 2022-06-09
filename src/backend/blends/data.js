@@ -1,4 +1,4 @@
-export default [
+const data = [
   {
     id: 0,
     name: 'Tasty Blend',
@@ -19,5 +19,6 @@ export default [
     blends: [0, 1],
     spices: [400, 401, 402, 403],
     description: 'This is a new spice blend',
-  }
+  },
 ];
+export default data;

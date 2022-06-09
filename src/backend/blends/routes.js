@@ -1,7 +1,5 @@
-import { Response } from 'miragejs';
-
 const blendRoutes = {
-  getBlends: (schema, request) => {
+  getBlends: (schema) => {
     const blends = schema.db.blends;
     return blends;
   },

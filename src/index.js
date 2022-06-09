@@ -5,7 +5,7 @@ import reportWebVitals from './reportWebVitals';
 import { Switch, BrowserRouter as Router, Route } from 'react-router-dom';
 
 // this will boostrap and run our backend.
-import backend from './backend';
+import './backend';
 
 // routes
 import App from './frontend/home';
