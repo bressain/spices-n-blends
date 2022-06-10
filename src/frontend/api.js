@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { QueryClient, useQueries, useQuery } from 'react-query';
+import { QueryClient, useMutation, useQueries, useQuery } from 'react-query';
 
 const FIVE_MIN = 1000 * 60 * 5;
 const SPICES_KEY = 'spices';
@@ -67,4 +67,20 @@ export function useGetBlends(blendIds) {
       queryFn: () => getBlend(blendId),
     }))
   );
+}
+
+async function saveBlend(blend) {
+  return axios.post('/api/v1/blends', blend);
+}
+export function useSaveBlend() {
+  return useMutation(saveBlend, {
+    onSuccess: (res) => {
+      // get all blends and add new one to caches (list & single)
+      queryClient.setQueryData([BLENDS_KEY, res.data.id], res.data);
+
+      const allBlends = queryClient.getQueryData(BLENDS_KEY);
+      allBlends.push(res.data);
+      queryClient.setQueryData(BLENDS_KEY, allBlends);
+    },
+  });
 }

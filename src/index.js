@@ -13,6 +13,7 @@ import './backend';
 import App from './frontend/home';
 import SpiceDetail from './frontend/spice-detail';
 import BlendDetail from './frontend/blend-detail';
+import NewBlend from './frontend/new-blend';
 
 ReactDOM.render(
   <React.StrictMode>
@@ -24,6 +25,9 @@ ReactDOM.render(
           </Route>
           <Route path="/spices/:id">
             <SpiceDetail />
+          </Route>
+          <Route path="/blends/new">
+            <NewBlend />
           </Route>
           <Route path="/blends/:id">
             <BlendDetail />

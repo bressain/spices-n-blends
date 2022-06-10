@@ -11,7 +11,7 @@ const blendRoutes = {
   addBlend: (schema, request) => {
     const body = JSON.parse(request.requestBody);
     // add new blend
-    const blendRes = schema.db.blends.create(body);
+    const blendRes = schema.db.blends.insert(body);
     return blendRes;
   },
 };
