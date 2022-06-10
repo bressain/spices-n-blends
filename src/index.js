@@ -1,9 +1,10 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+import { queryClient } from './frontend/api';
 import reportWebVitals from './reportWebVitals';
 import { Switch, BrowserRouter as Router, Route } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { QueryClientProvider } from 'react-query';
 
 // this will boostrap and run our backend.
 import './backend';
@@ -12,8 +13,6 @@ import './backend';
 import App from './frontend/home';
 import SpiceDetail from './frontend/spice-detail';
 import BlendDetail from './frontend/blend-detail';
-
-const queryClient = new QueryClient();
 
 ReactDOM.render(
   <React.StrictMode>

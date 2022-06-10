@@ -8,7 +8,7 @@ const SpiceDetail = () => {
   return (
     <div>
       <h2>Spice Detail Page</h2>
-      {spiceQuery.isFetched && spiceQuery.data && (
+      {!spiceQuery.isLoading && (
         <div>
           <div>Spice Name: {spiceQuery.data.name}</div>
           <div>Spice Color: {spiceQuery.data.color}</div>

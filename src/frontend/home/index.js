@@ -19,7 +19,7 @@ function Home() {
           }}
         />
       </div>
-      {spicesQuery.isFetched &&
+      {!spicesQuery.isLoading &&
         spicesQuery.data
           .filter((spice) =>
             spice.name.toLowerCase().includes(searchString.toLowerCase())
@@ -30,7 +30,7 @@ function Home() {
             </div>
           ))}
       <h4>Blend List</h4>
-      {blendsQuery.isFetched &&
+      {!blendsQuery.isLoading &&
         blendsQuery.data
           .filter((blend) =>
             blend.name.toLowerCase().includes(searchString.toLowerCase())

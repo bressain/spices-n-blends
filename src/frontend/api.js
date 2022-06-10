@@ -1,14 +1,26 @@
 import axios from 'axios';
-import { useQuery } from 'react-query';
+import { QueryClient, useQueries, useQuery } from 'react-query';
 
 const FIVE_MIN = 1000 * 60 * 5;
+const SPICES_KEY = 'spices';
+const BLENDS_KEY = 'blends';
+
+export const queryClient = new QueryClient();
 
 async function getAllSpices() {
   const { data } = await axios.get('/api/v1/spices');
   return data;
 }
 export function useGetAllSpices() {
-  return useQuery('spices', getAllSpices, { staleTime: FIVE_MIN });
+  return useQuery(SPICES_KEY, getAllSpices, {
+    staleTime: FIVE_MIN,
+    onSuccess: (data) => {
+      // load already fetched data into cache
+      data.forEach((d) => {
+        queryClient.setQueryData([SPICES_KEY, d.id], d);
+      });
+    },
+  });
 }
 
 async function getSpice(spiceId) {
@@ -16,7 +28,8 @@ async function getSpice(spiceId) {
   return data;
 }
 export function useGetSpice(spiceId) {
-  return useQuery(['spices', spiceId], () => getSpice(spiceId), {
+  // need to coerce ID to string since the key is [string, string]
+  return useQuery([SPICES_KEY, spiceId.toString()], () => getSpice(spiceId), {
     staleTime: FIVE_MIN,
   });
 }
@@ -26,5 +39,32 @@ async function getAllBlends() {
   return data;
 }
 export function useGetAllBlends() {
-  return useQuery('blends', getAllBlends, { staleTime: FIVE_MIN });
+  return useQuery(BLENDS_KEY, getAllBlends, {
+    staleTime: FIVE_MIN,
+    onSuccess: (data) => {
+      // load already fetched data into cache
+      data.forEach((d) => {
+        queryClient.setQueryData([BLENDS_KEY, d.id], d);
+      });
+    },
+  });
+}
+
+async function getBlend(blendId) {
+  const { data } = await axios.get(`/api/v1/blends/${blendId}`);
+  return data;
+}
+export function useGetBlend(blendId) {
+  // need to coerce ID to string since the key is [string, string]
+  return useQuery([BLENDS_KEY, blendId.toString()], () => getBlend(blendId), {
+    staleTime: FIVE_MIN,
+  });
+}
+export function useGetBlends(blendIds) {
+  return useQueries(
+    blendIds.map((blendId) => ({
+      queryKey: [BLENDS_KEY, blendId],
+      queryFn: () => getBlend(blendId),
+    }))
+  );
 }
