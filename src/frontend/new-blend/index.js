@@ -1,5 +1,23 @@
+import styled from '@emotion/styled';
 import { useCallback, useState } from 'react';
 import { useGetAllBlends, useGetAllSpices, useSaveBlend } from '../api';
+import DetailLayout from '../components/detail-layout';
+
+const FormControlContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 10px;
+  max-width: 500px;
+
+  label {
+    font-size: 0.8em;
+  }
+`;
+const ErrorLabel = styled.span`
+  color: red;
+  font-size: 0.8em;
+  margin-left: 4px;
+`;
 
 function NewBlend() {
   const spicesQuery = useGetAllSpices();
@@ -28,7 +46,10 @@ function NewBlend() {
         name: formData.get('name'),
         description: formData.get('description'),
         spices: formData.getAll('spices').map((s) => +s),
-        blends: formData.getAll('blends').map((b) => +b),
+        blends: formData
+          .getAll('blends')
+          .filter((b) => !!b)
+          .map((b) => +b),
       };
       const errorsFound = getErrors(blend);
       if (errorsFound) {
@@ -43,23 +64,29 @@ function NewBlend() {
   );
 
   return (
-    <div>
+    <DetailLayout>
       <h1>Add New Blend</h1>
       <form onSubmit={onSaveBlend}>
-        <div>
-          <label htmlFor="name">* Name</label>
-          {errors?.name && <span>Please provide a name</span>}
+        <FormControlContainer>
+          <div>
+            <label htmlFor="name">Name *</label>
+            {errors?.name && <ErrorLabel>Please provide a name</ErrorLabel>}
+          </div>
           <input name="name" type="text" />
-        </div>
-        <div>
+        </FormControlContainer>
+        <FormControlContainer>
           <label htmlFor="description">Description</label>
           <input name="description" type="text" />
-        </div>
-        <div>
-          <label htmlFor="spices">* Spices</label>
-          {errors?.spices && <span>Please select at least one spice</span>}
+        </FormControlContainer>
+        <FormControlContainer>
+          <div>
+            <label htmlFor="spices">Spices *</label>
+            {errors?.spices && (
+              <ErrorLabel>Please select at least one spice</ErrorLabel>
+            )}
+          </div>
           {!spicesQuery.isLoading && (
-            <select name="spices" multiple>
+            <select name="spices" multiple size={10}>
               {spicesQuery.data.map((spice) => (
                 <option key={spice.id} value={spice.id}>
                   {spice.name}
@@ -67,11 +94,11 @@ function NewBlend() {
               ))}
             </select>
           )}
-        </div>
-        <div>
-          <label htmlFor="spices">Included Blends</label>
+        </FormControlContainer>
+        <FormControlContainer>
+          <label htmlFor="spices">Included blends</label>
           {!blendsQuery.isLoading && (
-            <select name="blends" multiple>
+            <select name="blends" multiple size={10}>
               <option value="">--None--</option>
               {blendsQuery.data.map((blend) => (
                 <option key={blend.id} value={blend.id}>
@@ -80,10 +107,10 @@ function NewBlend() {
               ))}
             </select>
           )}
-        </div>
+        </FormControlContainer>
         <button type="submit">Save</button>
       </form>
-    </div>
+    </DetailLayout>
   );
 }
 

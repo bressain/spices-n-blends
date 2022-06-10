@@ -25,6 +25,11 @@ const ListContainer = styled.div`
     border: 1px solid #aaa;
     border-radius: 5px;
   }
+
+  & > a {
+    display: block;
+    margin-top: 4px;
+  }
 `;
 
 function Home() {
@@ -66,6 +71,7 @@ function Home() {
                 </li>
               ))}
         </ul>
+        <Link to="/blends/new">Add new blend</Link>
       </ListContainer>
     </Container>
   );
