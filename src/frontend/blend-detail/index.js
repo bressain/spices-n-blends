@@ -1,66 +1,66 @@
-import { Link, useParams } from 'react-router-dom';
-import { useGetBlend, useGetSpice } from '../api';
+import styled from '@emotion/styled';
+import { useParams } from 'react-router-dom';
+import { useGetBlend } from '../api';
+import BlendItem from './blend-item';
 import { useGetParentAndChildSpiceIds } from './hooks';
+import DetailLayout from '../components/detail-layout';
+import SpiceItem from './spice-item';
 
-const SpiceItem = ({ id }) => {
-  const spiceQuery = useGetSpice(id);
+const DescriptionContainer = styled.div`
+  display: flex;
+  column-gap: 4px;
+  max-width: 500px;
+`;
 
-  if (spiceQuery.isError) return <li>Error loading spice 😕</li>;
+const ListContainer = styled.div`
+  display: flex;
+  column-gap: 4px;
 
-  return (
-    <li>
-      <Link to={`/spices/${id}`}>
-        {spiceQuery.isSuccess ? spiceQuery.data.name : ''}
-      </Link>
-    </li>
-  );
-};
-
-const BlendItem = ({ id }) => {
-  const blendQuery = useGetBlend(id);
-
-  return (
-    <li>
-      <Link to={`/blends/${id}`}>
-        {blendQuery.isSuccess ? blendQuery.data.name : ''}
-      </Link>
-    </li>
-  );
-};
+  & > ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+`;
 
 const BlendDetail = () => {
   const { id } = useParams();
   const blendQuery = useGetBlend(id);
   const childSpiceIds = useGetParentAndChildSpiceIds(blendQuery.data);
 
+  if (blendQuery.isLoading) {
+    return <DetailLayout>Loading...</DetailLayout>;
+  }
+  if (blendQuery.isError) {
+    return <DetailLayout>There was an error loading blend 😱</DetailLayout>;
+  }
+
   return (
-    <div>
-      <h2>Blend Detail Page</h2>
-      {!blendQuery.isLoading && (
-        <div>
-          <div>Blend Name: {blendQuery.data.name}</div>
-          <div>Blend Description: {blendQuery.data.description}</div>
-          <div>
-            <span>Spices:</span>
-            <ul>
-              {childSpiceIds.map((spiceId) => (
-                <SpiceItem key={spiceId} id={spiceId} />
-              ))}
-            </ul>
-          </div>
-          {blendQuery.data.blends.length ? (
-            <div>
-              <span>Included Blends:</span>
-              <ul>
-                {blendQuery.data.blends.map((blendId) => (
-                  <BlendItem key={blendId} id={blendId} />
-                ))}
-              </ul>
-            </div>
-          ) : undefined}
-        </div>
-      )}
-    </div>
+    <DetailLayout>
+      <h1>{blendQuery.data.name}</h1>
+      <DescriptionContainer>
+        <label>Description:</label>
+        <span>{blendQuery.data.description}</span>
+      </DescriptionContainer>
+      <ListContainer>
+        <label>Spices:</label>
+        <ul>
+          {childSpiceIds.map((spiceId) => (
+            <SpiceItem key={spiceId} id={spiceId} />
+          ))}
+        </ul>
+      </ListContainer>
+      {blendQuery.data.blends.length ? (
+        <ListContainer>
+          <label>Included Blends:</label>
+          <ul>
+            {blendQuery.data.blends.map((blendId) => (
+              <BlendItem key={blendId} id={blendId} />
+            ))}
+          </ul>
+        </ListContainer>
+      ) : undefined}
+    </DetailLayout>
   );
 };
 

@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import { BrowserRouter } from 'react-router-dom';
 import { TestQueryClientProviderWrapper } from '../util/tests';
 import BlendDetail from './index';
 
@@ -12,9 +13,11 @@ jest.mock('react-router-dom', () => ({
 test('renders blend detail page', async () => {
   render(
     <TestQueryClientProviderWrapper>
-      <BlendDetail />
+      <BrowserRouter>
+        <BlendDetail />
+      </BrowserRouter>
     </TestQueryClientProviderWrapper>
   );
-  const detailElement = screen.getByText(/Blend Detail Page/i);
+  const detailElement = screen.getByText(/Loading.../i);
   expect(detailElement).toBeInTheDocument();
 });

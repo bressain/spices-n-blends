@@ -7,10 +7,6 @@ const LabelElementContainer = styled.div`
   display: flex;
   align-items: center;
   column-gap: 4px;
-
-  & > label {
-    font-weight: bold;
-  }
 `;
 
 function LabeledElement({ label, children }) {

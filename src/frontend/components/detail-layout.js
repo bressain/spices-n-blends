@@ -5,6 +5,9 @@ const Container = styled.div`
   margin-left: 2em;
   line-height: 1.5;
 
+  & label {
+    font-weight: bold;
+  }
   & > a {
     display: block;
     margin-top: 20px;
