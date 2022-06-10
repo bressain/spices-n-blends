@@ -1,35 +1,22 @@
 import { useMemo } from 'react';
-import { useGetBlends } from '../api';
+import { useGetParentAndChildBlends } from '../api';
 
 export function useGetParentAndChildSpiceIds(blend) {
-  const childBlends = useGetBlends(blend ? blend.blends : []);
+  const allBlends = useGetParentAndChildBlends(blend ? blend.id : undefined);
 
-  return useMemo(
-    () => getUniqueSpiceIds(blend, childBlends),
-    [blend, childBlends]
-  );
+  return useMemo(() => getUniqueSpiceIds(allBlends), [allBlends]);
 }
 
-function getUniqueSpiceIds(parentBlend, childBlendQueries) {
-  if (!parentBlend) return [];
-  if (!parentBlend.blends.length) return parentBlend.spices;
-  if (childBlendQueries.some((cb) => cb.isLoading)) return [];
-
-  const parentAndChildSpiceIds = [
-    ...parentBlend.spices,
-    ...childBlendQueries.reduce(
-      (childSpices, cb) => childSpices.concat(cb.data.spices),
-      []
-    ),
-  ];
-  const uniqueSpiceIdsMap = parentAndChildSpiceIds.reduce(
-    (uniqueSpices, spice) => {
-      if (!uniqueSpices[spice]) {
-        uniqueSpices[spice] = spice;
-      }
-      return uniqueSpices;
-    },
-    {}
+function getUniqueSpiceIds(blends) {
+  const allSpiceIds = blends.reduce(
+    (spices, cb) => spices.concat(cb.spices),
+    []
   );
+  const uniqueSpiceIdsMap = allSpiceIds.reduce((uniqueSpices, spice) => {
+    if (!uniqueSpices[spice]) {
+      uniqueSpices[spice] = spice;
+    }
+    return uniqueSpices;
+  }, {});
   return Object.keys(uniqueSpiceIdsMap);
 }

@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { QueryClient, useMutation, useQueries, useQuery } from 'react-query';
+import { useEffect, useState } from 'react';
 
 const FIVE_MIN = 1000 * 60 * 5;
 const SPICES_KEY = 'spices';
@@ -59,6 +60,39 @@ export function useGetBlend(blendId) {
   return useQuery([BLENDS_KEY, blendId.toString()], () => getBlend(blendId), {
     staleTime: FIVE_MIN,
   });
+}
+async function getParentAndChildBlends(blendId) {
+  try {
+    const blend = await queryClient.fetchQuery(
+      [BLENDS_KEY, blendId.toString()],
+      () => getBlend(blendId),
+      { staleTime: FIVE_MIN }
+    );
+    if (!blend.blends.length) {
+      return [blend];
+    } else {
+      const childBlends = await Promise.all(
+        blend.blends.map((bId) => getParentAndChildBlends(bId))
+      );
+      return [blend, ...childBlends.flat()];
+    }
+  } catch (error) {
+    console.error(`Error loading all related blends for ${blendId}`);
+    return [];
+  }
+}
+export function useGetParentAndChildBlends(blendId) {
+  const [data, setData] = useState([]);
+
+  useEffect(() => {
+    if (blendId) {
+      getParentAndChildBlends(blendId).then((res) => {
+        setData(res);
+      });
+    }
+  }, [blendId]);
+
+  return data;
 }
 export function useGetBlends(blendIds) {
   return useQueries(
